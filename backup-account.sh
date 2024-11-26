@@ -67,3 +67,6 @@ find $BACKUP_DIR/$USER_TO_BACKUP -type f -name "*_files_*.tar.gz" -mtime +7 -del
 find $BACKUP_DIR/$USER_TO_BACKUP -type f -name "*_databases_*.tar.gz" -mtime +7 -delete
 
 echo "Backup process for $USER_TO_BACKUP completed on $(date)" >> $BACKUP_LOG
+
+# Exit the script successfully
+exit 0
