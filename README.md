@@ -34,7 +34,8 @@ Backing up all accounts
 Run the backup.sh script:
 
 ```bash
-./backup.sh```
+./backup.sh
+```
 
 ## Backing up a specific cPanel account
 Run the backup-account.sh script with the cPanel username as an argument:
