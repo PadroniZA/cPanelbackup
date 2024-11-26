@@ -20,8 +20,9 @@ These scripts provide a straightforward way to back up all accounts or a specifi
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/cpanel-backup.git
-   cd cpanel-backup```
+   git clone [https://github.com/PadroniZA/cPanelbackup/cpanel-backup.git]
+   cd cpanel-backup
+   ```
 
 2. Make the scripts executable.
 ```bash
