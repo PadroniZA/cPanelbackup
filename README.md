@@ -29,6 +29,17 @@ chmod +x backup.sh
 chmod +x backup-account.sh
 ```
 
+## Usage
+Backing up all accounts
+Run the backup.sh script:
 
+```bash
+./backup.sh```
+
+## Backing up a specific cPanel account
+Run the backup-account.sh script with the cPanel username as an argument:
+```bash
+./backup-account.sh <cpanel_username>
+```
 
 
