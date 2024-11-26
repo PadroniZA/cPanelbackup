@@ -1,9 +1,34 @@
-# cPanelbackup
-Backup all accounts on a cPanel server.
-Clone, and make executable with 
-'''chmod +x backup.sh''' 
-or 
-'''chmod +x backup-account.sh'''
+# cPanel Backup Scripts
+
+These scripts provide a straightforward way to back up all accounts or a specific account on a cPanel server.
+
+---
+
+## Scripts Overview
+
+### 1. `backup.sh`
+- Backs up **all accounts** on the cPanel server.
+- Suitable for scheduled full-server backups.
+
+### 2. `backup-account.sh`
+- Backs up a **specific cPanel account**.
+- Requires the cPanel account name as a command-line argument.
+
+---
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/cpanel-backup.git
+   cd cpanel-backup```
+
+2. Make the scripts executable.
+```bash
+chmod +x backup.sh
+chmod +x backup-account.sh
+```
+
 
 
 
