@@ -1,12 +1,11 @@
 #!/bin/bash
 
 # Set variables
-BACKUP_DIR="/home/backups/$DATE"
 DATE=$(date +"%Y%m%d")
+BACKUP_DIR="/home/backups/$DATE"
 BACKUP_LOG="$BACKUP_DIR/backup_log_$DATE.log"
 S3_BUCKET="s3://padroni-srv2-backups/${DATE}"
 ENDPOINT_URL="https://s3.wasabisys.com"
-TIMEOUT_DURATION=14400  # 4 hours timeout in seconds
 
 # Ensure backup directory exists
 mkdir -p $BACKUP_DIR
@@ -41,7 +40,7 @@ backup_databases() {
     # Get list of databases
     USER_DBS=$(mysql -u root -e "SHOW DATABASES;" | grep "^$USER" | grep -v -E 'information_schema|mysql|performance_schema|phpmyadmin')
 
-    for db in $DBS; do
+    for db in $USER_DBS; do
         # Generate list of ignore options for tables starting with 'recovery.'
         IGNORE_TABLES=""
         for table in $(mysql -u root -e "SHOW TABLES FROM $db LIKE 'recovery.%'" -B | sed 's/^/--ignore-table='$db'./' ); do
@@ -55,8 +54,10 @@ backup_databases() {
 }
 
 # Backup all accounts
+
 for USER in $(ls -A /home); do
-    if [ -d "/home/$USER" ]; then
+    # Skip unwanted directories like 'backups', 'virtfs', and 'root' explicitly
+    if [ -d "/home/$USER" ] && [ "$USER" != "backups" ] && [ "$USER" != "virtfs" ] && [ "$USER" != "root" ]; then
         backup_files $USER
         backup_databases $USER
 
@@ -65,8 +66,11 @@ for USER in $(ls -A /home); do
             echo "Backup for $USER completed successfully on $(date)" >> $BACKUP_LOG
         else 
             echo "Backup for $USER failed on $(date)" >> $BACKUP_LOG
-            exit 1
+            # Note: It might be better to log this and continue rather than exit if one user's backup fails
+            # exit 1
         fi
+    else
+        echo "Skipping backup for $USER" >> $BACKUP_LOG
     fi
 done
 
@@ -75,6 +79,53 @@ done
 #find $BACKUP_DIR -type f -name "*_databases_*.tar.gz" -mtime +7 -delete
 
 echo "Backup process completed on $(date)" >> $BACKUP_LOG
+
+
+# S3 Section.
+# Function: compress backup dir.
+archive_backup() {
+    DATE=$(date +"%Y%m%d")
+    BACKUP_DIR="/home/backups/$DATE"
+    ARCHIVE_FILE="/home/backups/backup_$DATE.tar.gz"
+
+    if [ -d "$BACKUP_DIR" ]; then
+        echo "Archiving backup directory: $BACKUP_DIR"
+        tar -czf "$ARCHIVE_FILE" -C "$BACKUP_DIR" .
+        
+        if [ $? -eq 0 ]; then
+            echo "Archive created successfully: $ARCHIVE_FILE"
+            rm -rf "$BACKUP_DIR"
+            echo "Backup directory removed: $BACKUP_DIR"
+        else
+            echo "Error: Failed to create archive."
+            return 1
+        fi
+    else
+        echo "Error: Backup directory does not exist: $BACKUP_DIR"
+        return 1
+    fi
+}
+
+# Run the backup archive function
+archive_backup
+if [ $? -ne 0 ]; then
+    echo "Archive creation failed. Exiting script."
+    exit 1
+fi
+
+# Upload archive to S3
+echo "Uploading archive to S3..."
+aws s3 cp "$ARCHIVE_FILE" "$S3_BUCKET/$(basename "$ARCHIVE_FILE")" --endpoint-url="$ENDPOINT_URL"
+UPLOAD_STATUS=$?
+
+if [ $UPLOAD_STATUS -eq 0 ]; then
+    echo "Upload of backup completed successfully."
+else
+    echo "Upload of backup failed. Exiting script."
+    exit 1
+fi
+
+
 
 # Exit the script successfully
 exit 0
