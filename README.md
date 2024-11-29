@@ -52,6 +52,7 @@ chmod +x backup-account.sh
 ```
 
 ## Usage
+### EDIT THE S3 VARIABLES TO SUIT YOUR OWN ENVIRONMENT.
 Backing up all accounts
 Run the backup.sh script:
 
