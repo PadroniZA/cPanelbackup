@@ -120,6 +120,8 @@ UPLOAD_STATUS=$?
 
 if [ $UPLOAD_STATUS -eq 0 ]; then
     echo "Upload of backup completed successfully."
+    sleep 10
+    rm -rf "$ARCHIVE_FILE"
 else
     echo "Upload of backup failed. Exiting script."
     exit 1
