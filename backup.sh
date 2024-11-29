@@ -4,6 +4,9 @@
 BACKUP_DIR="/home/backups/$DATE"
 DATE=$(date +"%Y%m%d")
 BACKUP_LOG="$BACKUP_DIR/backup_log_$DATE.log"
+S3_BUCKET="s3://padroni-srv2-backups/${DATE}"
+ENDPOINT_URL="https://s3.wasabisys.com"
+TIMEOUT_DURATION=14400  # 4 hours timeout in seconds
 
 # Ensure backup directory exists
 mkdir -p $BACKUP_DIR
