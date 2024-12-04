@@ -115,7 +115,7 @@ fi
 
 # Upload archive to S3
 echo "Uploading archive to S3..."
-aws s3 cp "$ARCHIVE_FILE" "$S3_BUCKET/$(basename "$ARCHIVE_FILE")" --endpoint-url="$ENDPOINT_URL"
+/usr/local/bin/aws s3 cp "$ARCHIVE_FILE" "$S3_BUCKET/$(basename "$ARCHIVE_FILE")" --endpoint-url="$ENDPOINT_URL"
 UPLOAD_STATUS=$?
 
 if [ $UPLOAD_STATUS -eq 0 ]; then
