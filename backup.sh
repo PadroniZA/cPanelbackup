@@ -6,6 +6,7 @@ BACKUP_DIR="/home/backups/$DATE"
 BACKUP_LOG="$BACKUP_DIR/backup_log_$DATE.log"
 S3_BUCKET="s3://padroni-srv2-backups/${DATE}"
 ENDPOINT_URL="https://s3.wasabisys.com"
+export PATH=$PATH:/usr/local/bin
 
 # Ensure backup directory exists
 mkdir -p $BACKUP_DIR
